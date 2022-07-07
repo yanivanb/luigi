@@ -4,6 +4,7 @@ import be.vdab.luigi.domain.Pizza;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.math.BigDecimal;
@@ -12,6 +13,7 @@ import java.util.Optional;
 
 // enkele imports
 @Controller
+@RequestMapping("pizzas")
 class PizzaController {
     private final Pizza[] allePizzas = {
             new Pizza(1, "Prosciutto", BigDecimal.valueOf(4), true),
@@ -21,7 +23,7 @@ class PizzaController {
     private Optional<Pizza> findByIdHelper(long id) {
         return Arrays.stream(allePizzas).filter(pizza->pizza.getId()==id).findFirst();
     }
-    @GetMapping("/pizzas/{id}")
+    @GetMapping("{id}")
     public ModelAndView findById(@PathVariable long id) {
         var modelAndView = new ModelAndView("pizza");
         findByIdHelper(id).ifPresent(gevondenPizza ->
@@ -29,7 +31,7 @@ class PizzaController {
         return modelAndView;
     }
 
-    @GetMapping("/pizzas")
+    @GetMapping
     public ModelAndView findAll() {
         return new ModelAndView("pizzas", "allePizzas", allePizzas);
     }
