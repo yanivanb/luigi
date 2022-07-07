@@ -11,7 +11,6 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Optional;
 
-// enkele imports
 @Controller
 @RequestMapping("kleuren")
 class KleurController {
@@ -25,7 +24,7 @@ class KleurController {
     @GetMapping("{kleur}")
     public String kiesKleur(@PathVariable String kleur,
                             HttpServletResponse response) {
-        var cookie = new Cookie("kleur", kleur); // javax.servlet.http.Cookie
+        var cookie = new Cookie("kleur", kleur);
         cookie.setMaxAge(EEN_JAAR_IN_SECONDEN);
         cookie.setPath("/");
         response.addCookie(cookie);
