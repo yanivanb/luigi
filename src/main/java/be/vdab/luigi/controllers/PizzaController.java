@@ -27,7 +27,7 @@ class PizzaController {
     public ModelAndView findById(@PathVariable long id) {
         var modelAndView = new ModelAndView("pizza");
         findByIdHelper(id).ifPresent(gevondenPizza ->
-                modelAndView.addObject("pizza", gevondenPizza));
+                modelAndView.addObject(gevondenPizza));
         return modelAndView;
     }
 
