@@ -1,6 +1,8 @@
 package be.vdab.luigi.controllers;
 
 import be.vdab.luigi.domain.Pizza;
+import be.vdab.luigi.exceptions.KoersClientException;
+import be.vdab.luigi.services.EuroService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,14 +23,27 @@ class PizzaController {
             new Pizza(2, "Margherita", BigDecimal.valueOf(5), false),
             new Pizza(3, "Calzone", BigDecimal.valueOf(3), false)};
 
+    private final EuroService euroService;
+
+    PizzaController(EuroService euroService) {
+        this.euroService = euroService;
+    }
     private Optional<Pizza> findByIdHelper(long id) {
         return Arrays.stream(allePizzas).filter(pizza->pizza.getId()==id).findFirst();
     }
     @GetMapping("{id}")
     public ModelAndView findById(@PathVariable long id) {
         var modelAndView = new ModelAndView("pizza");
-        findByIdHelper(id).ifPresent(gevondenPizza ->
-                modelAndView.addObject(gevondenPizza));
+        findByIdHelper(id)
+                .ifPresent(gevondenPizza -> {
+                    modelAndView.addObject(gevondenPizza);
+                    try {
+                        modelAndView.addObject(
+                                "inDollar", euroService.naarDollar(gevondenPizza.getPrijs()));
+                    } catch (KoersClientException ex) {
+// Hier komt later code die de exception verwerkt.
+                    }
+                });
         return modelAndView;
     }
 
