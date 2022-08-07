@@ -1,8 +1,13 @@
 package be.vdab.luigi.restclients;
 
 import be.vdab.luigi.exceptions.KoersClientException;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -17,14 +22,10 @@ class FixerKoersClient implements KoersClient {
             Pattern.compile("^.*\"USD\": *(\\d+\\.?\\d*).*$",
                     Pattern.DOTALL);
     private final URL url; // uit de package java.net
-    FixerKoersClient() {
-        try {
-            url = new URL(
-                    "https://api.apilayer.com/fixer/latest?symbols=USD&base=EUR&apikey=CnISc2K91ZACQwwBXJvsKDcb5yh12tuh");
-        } catch (MalformedURLException ex) {
-            throw new KoersClientException("Fixer URL is verkeerd.");
-        }
+    FixerKoersClient(@Value("${fixerKoersURL}") URL url) {
+        this.url = url;
     }
+
     @Override
     public BigDecimal getDollarKoers() {
         try (var stream = url.openStream()) {
